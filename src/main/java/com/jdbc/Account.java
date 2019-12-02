@@ -1,6 +1,6 @@
 package com.jdbc;
 
-public class Account { //не используется
+public class Account {
     private int accountid;
     private int account;
     private int userid;

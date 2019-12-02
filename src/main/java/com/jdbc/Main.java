@@ -10,12 +10,20 @@ public class Main {
     private static final String URL = "jdbc:mysql://localhost:3306/bankdb?useSSL=false";
 
     public static void main(String[] args) throws SQLException {
-        databaseOutput();
+        System.out.println("Таблица user: ");
+        userOutput();
 
         System.out.println("Данные пользователя по id: ");
         int id = 8;
         User user = userDataById(id);
         System.out.println(user);
+        System.out.println();
+
+        System.out.println("Таблица account: ");
+        ArrayList<Account> accountList = accountData();
+        for (int i = 0; i < accountList.size(); i++) {
+            System.out.println(accountList.get(i));
+        }
         System.out.println();
 
         System.out.println("Номера всех аккаунтов: ");
@@ -26,10 +34,9 @@ public class Main {
         }
     }
 
-    private static void databaseOutput() throws SQLException {
+    private static void userOutput() throws SQLException {
         DBProcessor db = new DBProcessor();
         Connection conn = db.getConnection(URL, USERNAME, PASSWORD);
-        int num = 7;
         String query = "select * from bankdb.user";
         Statement statement = conn.createStatement();
         ResultSet resSet = statement.executeQuery(query);
@@ -67,6 +74,29 @@ public class Main {
         statement.close();
         conn.close();
         return user;
+    }
+
+    private static ArrayList<Account> accountData() throws SQLException {
+        DBProcessor db = new DBProcessor();
+        Connection conn = db.getConnection(URL, USERNAME, PASSWORD);
+        String query = "select * from bankdb.account";
+        Statement statement = conn.createStatement();
+        ResultSet resSet = statement.executeQuery(query);
+        ArrayList<Account> accountList = new ArrayList<>();
+
+        while (resSet.next()) {
+            int accountid;
+            int account;
+            int userid;
+            accountid = resSet.getInt("accountid");
+            account = resSet.getInt("account");
+            userid = resSet.getInt("userid");
+            Account newAccount = new Account(accountid, account, userid);
+            accountList.add(newAccount);
+        }
+        statement.close();
+        conn.close();
+        return accountList;
     }
 
     public static ArrayList<Integer> allAccounts() throws SQLException {
